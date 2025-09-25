@@ -28,8 +28,7 @@ float h = Input.GetAxis("Horizontal");
 float v = Input.GetAxis("Vertical");
 localCube.transform.Translate(new Vector3(h, v, 0) * Time.deltaTime * 5);
 // Envia posição
-string msg = "POS:" +
-localCube.transform.position.x.ToString("F2",CultureInfo.InvariantCulture) + ";" + localCube.transform.position.y.ToString("F2", CultureInfo.InvariantCulture);
+string msg = "POS:" + localCube.transform.position.x.ToString("F2",CultureInfo.InvariantCulture) + ";" + localCube.transform.position.y.ToString("F2", CultureInfo.InvariantCulture);
 
 client.Send(Encoding.UTF8.GetBytes(msg), msg.Length);
 
