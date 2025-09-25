@@ -2,6 +2,8 @@ using UnityEngine;
 
 public class Bola : MonoBehaviour
 {
+    public int PontoA = 0;
+    public int PontoB = 0;
     public float velocidade = 7f;
     private Rigidbody2D rb;
 
