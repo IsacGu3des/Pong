@@ -1,4 +1,5 @@
 using UnityEngine;
+using TMPro;
 
 public class Bola : MonoBehaviour
 {
@@ -6,6 +7,9 @@ public class Bola : MonoBehaviour
     public int PontoB = 0;
     public float velocidade = 7f;
     private Rigidbody2D rb;
+    public TextMeshProUGUI textoPontoA;
+    public TextMeshProUGUI textoPontoB;
+    
 
     void Start()
     {
@@ -37,14 +41,44 @@ public class Bola : MonoBehaviour
             rb.linearVelocity = novaDirecao * velocidade;
         }
         
-                if (collisao.gameObject.tag == "Gol1" )
+                if (colisao.gameObject.tag == "Gol1" )
                 {
                     PontoA++;
+                    AtualizarTexto();
+                    ReiniciarBola();
                 }
-                if (collisao.gameObject.tag == "Gol2")
+
+                if (colisao.gameObject.tag == "Gol2")
                 {
                     PontoB++;
+                    AtualizarTexto();
+                    ReiniciarBola();
                 }
-            
+
+    }
+    void AtualizarTexto()
+    {
+        textoPontoA.text = "Pontos: " + PontoA.ToString();
+        textoPontoB.text = "Pontos: " + PontoB.ToString();
+    }
+    void ReiniciarBola()
+    {
+        // Para a bola
+        rb.linearVelocity = Vector2.zero;
+
+        // Coloca no centro
+        transform.position = Vector2.zero;
+
+        // Espera um curto tempo e arremessa
+        Invoke(nameof(ArremessarBola), 1f); // 1 segundo de espera
+    }
+
+    void ArremessarBola()
+    {
+        float direcaoX = Random.value < 0.5f ? -1f : 1f;
+        float direcaoY = Random.Range(-0.5f, 0.5f);
+        Vector2 direcao = new Vector2(direcaoX, direcaoY).normalized;
+
+        rb.linearVelocity = direcao * velocidade;
     }
 }
