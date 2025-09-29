@@ -7,6 +7,7 @@ TagManager:
   - Raquete
   - Gol1
   - Gol2
+  - Bola
   layers:
   - Default
   - TransparentFX

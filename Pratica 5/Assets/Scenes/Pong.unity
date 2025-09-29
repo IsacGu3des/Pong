@@ -148,8 +148,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ef21ed4f7497e9d40a22d58921b98e98, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  player1Cube: {fileID: 251716031}
-  player2Cube: {fileID: 1866964910}
+  myId: -1
+  localCube: {fileID: 251716031}
+  remoteCube: {fileID: 1866964910}
+  bola: {fileID: 982695413}
 --- !u!4 &44586298
 Transform:
   m_ObjectHideFlags: 0
@@ -581,7 +583,7 @@ GameObject:
   - component: {fileID: 982695414}
   m_Layer: 0
   m_Name: Bola
-  m_TagString: Untagged
+  m_TagString: Bola
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -736,6 +738,7 @@ MonoBehaviour:
   velocidade: 7
   textoPontoA: {fileID: 125305615}
   textoPontoB: {fileID: 1890695342}
+  netClient: {fileID: 44586297}
 --- !u!1 &1067856764 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 8152093384007377599, guid: edf400e70a7dff84390ab9ea5d901aca, type: 3}
