@@ -4,18 +4,21 @@ public class Bola : MonoBehaviour
 {
     private Rigidbody2D rb;
     private UdpClientTwoClients udpClient;
+    private bool bolaLancada = false;
 
     public int PontoA = 0;
     public int PontoB = 0;
     public UnityEngine.UI.Text textoPontoA;
     public UnityEngine.UI.Text textoPontoB;
 
+    public float velocidade = 5f;   // Velocidade base da bola
+    public float fatorDesvio = 2f;  // Quanto influencia o ponto de contato no ângulo
+
     void Start()
     {
         rb = GetComponent<Rigidbody2D>();
         udpClient = FindObjectOfType<UdpClientTwoClients>();
 
-        // Só o jogador 2 controla o movimento inicial da bola
         if (udpClient != null && udpClient.myId == 2)
         {
             Invoke("LancarBola", 1f);
@@ -25,15 +28,20 @@ public class Bola : MonoBehaviour
     void LancarBola()
     {
         float dirX = Random.Range(0, 2) == 0 ? -1 : 1;
-        float dirY = Random.Range(-1f, 1f);
-        rb.linearVelocity = new Vector2(dirX, dirY).normalized * 5f;
+        float dirY = Random.Range(-0.5f, 0.5f); // inicia com pequeno ângulo
+        rb.linearVelocity = new Vector2(dirX, dirY).normalized * velocidade;
     }
 
     void Update()
     {
         if (udpClient == null) return;
 
-        // Só o player 2 envia a posição da bola
+        if (!bolaLancada && udpClient.myId == 2)
+        {
+            bolaLancada = true;
+            Invoke("LancarBola", 1f);
+        }
+
         if (udpClient.myId == 2)
         {
             string msg = "BALL:" +
@@ -48,7 +56,21 @@ public class Bola : MonoBehaviour
     {
         if (udpClient == null) return;
 
-        if (col.gameObject.CompareTag("Gol1"))
+        if (col.gameObject.CompareTag("Raquete"))
+        {
+            // Pega o ponto de contato
+            float posYbola = transform.position.y;
+            float posYraquete = col.transform.position.y;
+            float alturaRaquete = col.collider.bounds.size.y;
+
+            // Calcula diferença (normalizado entre -1 e 1)
+            float diferenca = (posYbola - posYraquete) / (alturaRaquete / 2f);
+
+            // Direção X mantém, Y é baseado na diferença
+            Vector2 direcao = new Vector2(Mathf.Sign(rb.linearVelocity.x), diferenca * fatorDesvio);
+            rb.linearVelocity = direcao.normalized * velocidade;
+        }
+        else if (col.gameObject.CompareTag("Gol1"))
         {
             PontoB++;
             ResetBola();
@@ -69,7 +91,6 @@ public class Bola : MonoBehaviour
         {
             Invoke("LancarBola", 1f);
 
-            // envia placar atualizado
             string msg = "SCORE:" + PontoA + ";" + PontoB;
             udpClient.SendUdpMessage(msg);
         }
