@@ -13,7 +13,7 @@ public class UdpClientTwoClients : MonoBehaviour
     Thread receiveThread;
     IPEndPoint serverEP;
 
-    Vector3 remotePos = Vector3.zero;
+    private Vector3 remotePos; // não começa mais em zero
     public GameObject localCube;
     public GameObject remoteCube;
     public GameObject bola; // referência à bola no Inspector
@@ -105,6 +105,9 @@ public class UdpClientTwoClients : MonoBehaviour
 
                 localCube.transform.position = new Vector3(-7f, 0f, 0f); // Esquerda
                 remoteCube.transform.position = new Vector3(7f, 0f, 0f);  // Direita
+
+                // Inicializa remotePos corretamente
+                remotePos = remoteCube.transform.position;
             }
             else if (myId == 2)
             {
@@ -113,6 +116,9 @@ public class UdpClientTwoClients : MonoBehaviour
 
                 localCube.transform.position = new Vector3(7f, 0f, 0f);   // Direita
                 remoteCube.transform.position = new Vector3(-7f, 0f, 0f); // Esquerda
+
+                // Inicializa remotePos corretamente
+                remotePos = remoteCube.transform.position;
             }
 
             // Reset da bola
