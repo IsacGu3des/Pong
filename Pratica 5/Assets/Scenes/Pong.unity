@@ -179,7 +179,7 @@ GameObject:
   - component: {fileID: 125305616}
   - component: {fileID: 125305615}
   m_Layer: 5
-  m_Name: Text (TMP) (1)
+  m_Name: Ponto B
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -735,10 +735,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   PontoA: 0
   PontoB: 0
+  textoPontoA: {fileID: 1890695342}
+  textoPontoB: {fileID: 125305615}
   velocidade: 7
-  textoPontoA: {fileID: 125305615}
-  textoPontoB: {fileID: 1890695342}
-  netClient: {fileID: 44586297}
+  fatorDesvio: 2
 --- !u!1 &1067856764 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 8152093384007377599, guid: edf400e70a7dff84390ab9ea5d901aca, type: 3}
@@ -1272,7 +1272,7 @@ GameObject:
   - component: {fileID: 1890695343}
   - component: {fileID: 1890695342}
   m_Layer: 5
-  m_Name: Text (TMP)
+  m_Name: Ponto A
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

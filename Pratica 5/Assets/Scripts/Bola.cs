@@ -1,4 +1,5 @@
 using UnityEngine;
+using TMPro;
 
 public class Bola : MonoBehaviour
 {
@@ -8,14 +9,15 @@ public class Bola : MonoBehaviour
 
     public int PontoA = 0;
     public int PontoB = 0;
-    public UnityEngine.UI.Text textoPontoA;
-    public UnityEngine.UI.Text textoPontoB;
+    public TextMeshProUGUI textoPontoA;
+    public TextMeshProUGUI textoPontoB;
 
     public float velocidade = 5f;   // Velocidade base da bola
     public float fatorDesvio = 2f;  // Quanto influencia o ponto de contato no ângulo
 
     void Start()
     {
+        
         rb = GetComponent<Rigidbody2D>();
         udpClient = FindObjectOfType<UdpClientTwoClients>();
 
@@ -73,11 +75,13 @@ public class Bola : MonoBehaviour
         else if (col.gameObject.CompareTag("Gol1"))
         {
             PontoB++;
+            textoPontoB.text = "Pontos:" + PontoB;
             ResetBola();
         }
         else if (col.gameObject.CompareTag("Gol2"))
         {
             PontoA++;
+            textoPontoA.text = "Pontos:" + PontoA;
             ResetBola();
         }
     }

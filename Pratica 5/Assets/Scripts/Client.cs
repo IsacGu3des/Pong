@@ -14,6 +14,7 @@ public class UdpClientTwoClients : MonoBehaviour
     IPEndPoint serverEP;
 
     private Vector3 remotePos; // não começa mais em zero
+    public int Velocidade = 5;
     public GameObject localCube;
     public GameObject remoteCube;
     public GameObject bola; // referência à bola no Inspector
@@ -24,7 +25,7 @@ public class UdpClientTwoClients : MonoBehaviour
     void Start()
     {
         client = new UdpClient();
-        serverEP = new IPEndPoint(IPAddress.Parse("10.57.1.73"), 5001);
+        serverEP = new IPEndPoint(IPAddress.Parse("10.57.1.146"), 5001);
         client.Connect(serverEP);
 
         receiveThread = new Thread(ReceiveData);
@@ -54,7 +55,7 @@ public class UdpClientTwoClients : MonoBehaviour
 
         // Movimento vertical da raquete
         float v = Input.GetAxis("Vertical");
-        localCube.transform.Translate(new Vector3(0, v, 0) * Time.deltaTime * 5);
+        localCube.transform.Translate(new Vector3(0, v, 0) * Time.deltaTime * Velocidade);
 
         // Limite no eixo Y
         Vector3 pos = localCube.transform.position;
@@ -62,18 +63,14 @@ public class UdpClientTwoClients : MonoBehaviour
         localCube.transform.position = pos;
 
         // Envia posição da raquete
-        string msgPos = "POS:" +
-                        myId + ";" +
-                        localCube.transform.position.x.ToString("F2", CultureInfo.InvariantCulture) + ";" +
-                        localCube.transform.position.y.ToString("F2", CultureInfo.InvariantCulture);
+        string msgPos = "POS:" + myId + ";" + localCube.transform.position.x.ToString("F2", CultureInfo.InvariantCulture) + ";" + localCube.transform.position.y.ToString("F2", CultureInfo.InvariantCulture);
 
         SendUdpMessage(msgPos);
 
         // Atualiza posição do outro jogador suavemente
         if (remoteCube != null)
         {
-            remoteCube.transform.position =
-                Vector3.Lerp(remoteCube.transform.position, remotePos, Time.deltaTime * 10f);
+            remoteCube.transform.position = Vector3.Lerp(remoteCube.transform.position, remotePos, Time.deltaTime * 10f);
         }
     }
 
@@ -103,8 +100,8 @@ public class UdpClientTwoClients : MonoBehaviour
                 localCube = GameObject.Find("Player 1");
                 remoteCube = GameObject.Find("Player 2");
 
-                localCube.transform.position = new Vector3(-7f, 0f, 0f); // Esquerda
-                remoteCube.transform.position = new Vector3(7f, 0f, 0f);  // Direita
+                localCube.transform.position = new Vector3(-8f, 0f, 0f); // Esquerda
+                remoteCube.transform.position = new Vector3(8f, 0f, 0f);  // Direita
 
                 // Inicializa remotePos corretamente
                 remotePos = remoteCube.transform.position;
