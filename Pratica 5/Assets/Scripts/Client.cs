@@ -14,7 +14,7 @@ public class UdpClientTwoClients : MonoBehaviour
     IPEndPoint serverEP;
 
     private Vector3 remotePos; // não começa mais em zero
-    public int Velocidade = 5;
+    public int Velocidade = 20;
     public GameObject localCube;
     public GameObject remoteCube;
     public GameObject bola; // referência à bola no Inspector
@@ -111,8 +111,8 @@ public class UdpClientTwoClients : MonoBehaviour
                 localCube = GameObject.Find("Player 2");
                 remoteCube = GameObject.Find("Player 1");
 
-                localCube.transform.position = new Vector3(7f, 0f, 0f);   // Direita
-                remoteCube.transform.position = new Vector3(-7f, 0f, 0f); // Esquerda
+                localCube.transform.position = new Vector3(8f, 0f, 0f);   // Direita
+                remoteCube.transform.position = new Vector3(-8f, 0f, 0f); // Esquerda
 
                 // Inicializa remotePos corretamente
                 remotePos = remoteCube.transform.position;

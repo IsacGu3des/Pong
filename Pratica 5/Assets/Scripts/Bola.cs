@@ -11,6 +11,8 @@ public class Bola : MonoBehaviour
     public int PontoB = 0;
     public TextMeshProUGUI textoPontoA;
     public TextMeshProUGUI textoPontoB;
+    public TextMeshProUGUI VitoriaLocal;
+    public TextMeshProUGUI VitoriaRemote;
 
     public float velocidade = 5f;   // Velocidade base da bola
     public float fatorDesvio = 2f;  // Quanto influencia o ponto de contato no ângulo
@@ -90,13 +92,44 @@ public class Bola : MonoBehaviour
     {
         transform.position = Vector3.zero;
         rb.linearVelocity = Vector2.zero;
-
-        if (udpClient != null && udpClient.myId == 2)
+        
+        if (PontoA > 10 || PontoB > 10)
+        {
+            GameOver();
+        }
+        
+        else if (udpClient != null && udpClient.myId == 2)
         {
             Invoke("LancarBola", 1f);
 
             string msg = "SCORE:" + PontoA + ";" + PontoB;
             udpClient.SendUdpMessage(msg);
         }
+        
+        
+
+    }
+
+    void GameOver()
+    {
+        transform.position = Vector3.zero;
+        rb.linearVelocity = Vector2.zero;
+        if (PontoA > 10 && udpClient.myId == 1)
+        {
+            VitoriaLocal.gameObject.SetActive(true);
+        }
+        else if (PontoA > 10 && udpClient.myId == 2)
+        {
+            VitoriaRemote.gameObject.SetActive(true);
+        }
+        else if (PontoB > 10 && udpClient.myId == 1)
+        {
+            VitoriaRemote.gameObject.SetActive(true);
+        }
+        else if (PontoB > 10 && udpClient.myId == 2)
+        {
+            VitoriaLocal.gameObject.SetActive(true);
+        }
+        
     }
 }
