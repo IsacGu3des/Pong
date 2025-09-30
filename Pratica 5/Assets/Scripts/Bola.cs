@@ -1,107 +1,77 @@
 using UnityEngine;
-using TMPro;
-using System.Net.Sockets;
-using System.Globalization;
 
 public class Bola : MonoBehaviour
 {
+    private Rigidbody2D rb;
+    private UdpClientTwoClients udpClient;
+
     public int PontoA = 0;
     public int PontoB = 0;
-    public float velocidade = 7f;
-    private Rigidbody2D rb;
-
-    public TextMeshProUGUI textoPontoA;
-    public TextMeshProUGUI textoPontoB;
-
-    public UdpClientTwoClients netClient; // referência ao cliente
-
-    private bool iniciou = false; // bola começou a se mover?
+    public UnityEngine.UI.Text textoPontoA;
+    public UnityEngine.UI.Text textoPontoB;
 
     void Start()
     {
         rb = GetComponent<Rigidbody2D>();
-        rb.linearVelocity = Vector2.zero;
-        transform.position = Vector3.zero;
+        udpClient = FindObjectOfType<UdpClientTwoClients>();
+
+        // Só o jogador 2 controla o movimento inicial da bola
+        if (udpClient != null && udpClient.myId == 2)
+        {
+            Invoke("LancarBola", 1f);
+        }
+    }
+
+    void LancarBola()
+    {
+        float dirX = Random.Range(0, 2) == 0 ? -1 : 1;
+        float dirY = Random.Range(-1f, 1f);
+        rb.linearVelocity = new Vector2(dirX, dirY).normalized * 5f;
     }
 
     void Update()
     {
-        if (!iniciou && netClient.myId == 2)
-        {
-            // Agora o ID 2 entrou, começamos o jogo
-            IniciarBola();
-        }
+        if (udpClient == null) return;
 
-        // Só envia posição se o ID 2 (host) está jogando
-        if (iniciou && netClient.myId == 2)
+        // Só o player 2 envia a posição da bola
+        if (udpClient.myId == 2)
         {
-            string msg = $"BALL:{transform.position.x.ToString("F2", CultureInfo.InvariantCulture)};" +
-                         $"{transform.position.y.ToString("F2", CultureInfo.InvariantCulture)}";
-            netClient.SendMessage(msg);
+            string msg = "BALL:" +
+                         transform.position.x.ToString(System.Globalization.CultureInfo.InvariantCulture) + ";" +
+                         transform.position.y.ToString(System.Globalization.CultureInfo.InvariantCulture);
+
+            udpClient.SendUdpMessage(msg);
         }
     }
 
-    void OnCollisionEnter2D(Collision2D colisao)
+    void OnCollisionEnter2D(Collision2D col)
     {
-        if (!iniciou || netClient.myId != 2) return;
+        if (udpClient == null) return;
 
-        if (colisao.gameObject.CompareTag("Raquete"))
-        {
-            float posicaoBolaY = transform.position.y;
-            float posicaoRaqueteY = colisao.transform.position.y;
-            float alturaRaquete = colisao.collider.bounds.size.y;
-
-            float diferenca = (posicaoBolaY - posicaoRaqueteY) / (alturaRaquete / 2);
-            float direcaoX = rb.linearVelocity.x > 0 ? 1 : -1;
-            Vector2 novaDirecao = new Vector2(direcaoX, diferenca).normalized;
-
-            rb.linearVelocity = novaDirecao * velocidade;
-        }
-
-        if (colisao.gameObject.tag == "Gol1")
-        {
-            PontoA++;
-            AtualizarTexto();
-            ReiniciarBola();
-            netClient.SendMessage($"SCORE:{PontoA};{PontoB}");
-        }
-
-        if (colisao.gameObject.tag == "Gol2")
+        if (col.gameObject.CompareTag("Gol1"))
         {
             PontoB++;
-            AtualizarTexto();
-            ReiniciarBola();
-            netClient.SendMessage($"SCORE:{PontoA};{PontoB}");
+            ResetBola();
         }
-    }
-
-    void AtualizarTexto()
-    {
-        textoPontoA.text = "Pontos: " + PontoA;
-        textoPontoB.text = "Pontos: " + PontoB;
-    }
-
-    void ReiniciarBola()
-    {
-        rb.linearVelocity = Vector2.zero;
-        transform.position = Vector3.zero;
-
-        if (netClient.myId == 2)
+        else if (col.gameObject.CompareTag("Gol2"))
         {
-            Invoke(nameof(ArremessarBola), 1f);
+            PontoA++;
+            ResetBola();
         }
     }
 
-    void IniciarBola()
+    void ResetBola()
     {
-        iniciou = true;
-        ArremessarBola();
-    }
+        transform.position = Vector3.zero;
+        rb.linearVelocity = Vector2.zero;
 
-    void ArremessarBola()
-    {
-        float direcaoX = Random.value < 0.5f ? -1f : 1f;
-        float direcaoY = Random.Range(-0.5f, 0.5f);
-        rb.linearVelocity = new Vector2(direcaoX, direcaoY).normalized * velocidade;
+        if (udpClient != null && udpClient.myId == 2)
+        {
+            Invoke("LancarBola", 1f);
+
+            // envia placar atualizado
+            string msg = "SCORE:" + PontoA + ";" + PontoB;
+            udpClient.SendUdpMessage(msg);
+        }
     }
 }
